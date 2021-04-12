@@ -36,3 +36,8 @@ class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
         fields = ('question_title', 'question_desc', 'correct_attempts', 'total_attempts', 'max_marks')
+
+class Codingpageserializer(serializers.ModelSerializer):
+    class Meta:
+        model = Question
+        fields = ('question_title', 'question_desc', 'constraints', 'explanation', 'iformat','oformat','sampleInput','sampleOutput')
