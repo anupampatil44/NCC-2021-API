@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 
 # User Serializer
-from data.models import Userdata
+from data.models import Userdata,Question
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -32,7 +32,7 @@ class AccountSerializer(serializers.ModelSerializer):
         return useri
 
 
-# class QuestionSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Question
-#         fields = ['question_title', 'question_desc', 'correct_attempts', 'total_attempts', 'max_marks']
+class QuestionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Question
+        fields = ('question_title', 'question_desc', 'correct_attempts', 'total_attempts', 'max_marks')

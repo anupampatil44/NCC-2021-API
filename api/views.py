@@ -5,12 +5,18 @@ from rest_framework import permissions, generics
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from knox.views import LoginView as KnoxLoginView
 from rest_framework import permissions
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from knox.models import AuthToken
-from .serializers import UserSerializer, AccountSerializer
+from .serializers import UserSerializer, AccountSerializer, QuestionSerializer
+from data.models import Question
+
 
 # @api_view(['POST',])
+
+
+
 class RegisterAPI(generics.GenericAPIView):
     serializer_class = AccountSerializer
 
@@ -41,3 +47,11 @@ class LoginAPI(KnoxLoginView):
         user = serializer.validated_data['user']
         login(request, user)
         return super(LoginAPI, self).post(request, format=None)
+
+@api_view(('GET',))
+def questionhub(request):
+    if request.method == 'GET':
+        questions = Question.objects.all()
+        serializer=QuestionSerializer(questions,many=True)
+        return Response(serializer.data)
+
