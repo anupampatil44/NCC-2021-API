@@ -9,7 +9,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from knox.models import AuthToken
-from .serializers import UserSerializer, AccountSerializer, QuestionSerializer
+from .serializers import UserSerializer, AccountSerializer, QuestionSerializer,Codingpageserializer
 from data.models import Question
 
 
@@ -55,3 +55,9 @@ def questionhub(request):
         serializer=QuestionSerializer(questions,many=True)
         return Response(serializer.data)
 
+@api_view(('GET',))
+def codingpage(request):
+    if request.method == 'GET':
+        questions = Question.objects.all()
+        serializer=Codingpageserializer(questions,many=True)
+        return Response(serializer.data)
