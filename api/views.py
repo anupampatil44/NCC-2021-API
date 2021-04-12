@@ -1,14 +1,18 @@
 from tokenize import Token
 from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
 
 from rest_framework import permissions, generics
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from knox.views import LoginView as KnoxLoginView
 from rest_framework import permissions
 from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from knox.models import AuthToken
+from rest_framework.views import APIView
+
 from .serializers import UserSerializer, AccountSerializer, QuestionSerializer,Codingpageserializer
 from data.models import Question
 
@@ -48,16 +52,25 @@ class LoginAPI(KnoxLoginView):
         login(request, user)
         return super(LoginAPI, self).post(request, format=None)
 
-@api_view(('GET',))
-def questionhub(request):
-    if request.method == 'GET':
-        questions = Question.objects.all()
-        serializer=QuestionSerializer(questions,many=True)
-        return Response(serializer.data)
 
-@api_view(('GET',))
-def codingpage(request):
-    if request.method == 'GET':
-        questions = Question.objects.all()
-        serializer=Codingpageserializer(questions,many=True)
-        return Response(serializer.data)
+
+
+
+class questionhub(APIView):
+    permission_classes = (IsAuthenticated,)
+    def get(self, request, format=None):
+
+        if request.method == 'GET':
+            questions = Question.objects.all()
+            serializer=QuestionSerializer(questions,many=True)
+            return Response(serializer.data)
+
+
+class codingpage(APIView):
+    permission_classes = (IsAuthenticated,)
+    def get(self,request,format=None):
+
+        if request.method == 'GET':
+            questions = Question.objects.all()
+            serializer=Codingpageserializer(questions,many=True)
+            return Response(serializer.data)
