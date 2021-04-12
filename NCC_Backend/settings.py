@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'knox',
     'rest_framework.authtoken',
     'api',
     'data',
@@ -46,11 +47,11 @@ INSTALLED_APPS = [
 
 REST_FRAMEWORK={
     'DEFAULT_AUTHENTICATION_CLASSES':[
-        'rest_framework.authentication.TokenAuthentication',
+        # 'rest_framework.authentication.TokenAuthentication',
+        'knox.auth.TokenAuthentication',
     ]
 }
 
-AUTH_USER_MODEL='data.Userdata'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

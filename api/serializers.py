@@ -1,16 +1,38 @@
-# from rest_framework import serializers
-from data.models import Userdata
 from rest_framework import serializers
+from django.contrib.auth.models import User
+
+# User Serializer
+from data.models import Userdata
+
 
 class UserSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
-
     class Meta:
-        model = Userdata
-        fields = ('name', 'username', 'email', 'phone','college','junior', 'password')
+        model = User
+        fields = ('id', 'username', 'email')
+
+# Register Serializer
+class AccountSerializer(serializers.ModelSerializer):
+
+    class RegisterSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = Userdata
+            exclude=['username','totalScore','correctly_solved','attempted']
+
+
+    profile=RegisterSerializer()
+    class Meta:
+        model=User
+        exclude = ['last_login', 'is_superuser', 'is_staff', 'date_joined', 'is_active', 'groups', 'user_permissions']
+        extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
-        user = super(UserSerializer, self).create(validated_data)
-        user.set_password(validated_data['password'])
-        user.save()
-        return user
+        profile_data = validated_data.pop('profile')
+        useri = User.objects.create_user(**validated_data)
+        Userdata.objects.create(username=useri,**profile_data)
+        return useri
+
+
+# class QuestionSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Question
+#         fields = ['question_title', 'question_desc', 'correct_attempts', 'total_attempts', 'max_marks']

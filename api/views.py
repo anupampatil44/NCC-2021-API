@@ -1,30 +1,43 @@
 from tokenize import Token
+from django.contrib.auth import login
 
-from django.shortcuts import render
-from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework import permissions, generics
+from rest_framework.authtoken.serializers import AuthTokenSerializer
+from knox.views import LoginView as KnoxLoginView
+from rest_framework import permissions
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from rest_framework.authtoken.models import Token
 
-from .serializers import UserSerializer
+from knox.models import AuthToken
+from .serializers import UserSerializer, AccountSerializer
+
+# @api_view(['POST',])
+class RegisterAPI(generics.GenericAPIView):
+    serializer_class = AccountSerializer
+
+    def post(self, request, *args, **kwargs):
+        print("data:\n",request.data)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            user = serializer.save()
+            return Response({
+            "user": UserSerializer(user, context=self.get_serializer_context()).data,
+            "token": AuthToken.objects.create(user)[1]
+            })
+
+        except Exception as e:
+            data = serializer.errors   #{"exception":str(e)}
+            return Response(data)
 
 
-@api_view(['POST',])
-def registration_view(request):
-    if request.method=='POST':
-        serializer=UserSerializer(data=request.data)
-        data={}
-        if serializer.is_valid():
-            account=serializer.save()
-            data['response']="successfully registered new user"
-            data['email'] = account.email
-            data['username']=account.username
-            token=Token.objects.get(user=account).key
-            data['token']=token
 
-        else:
-            data=serializer.errors
 
-        return Response(data)
+class LoginAPI(KnoxLoginView):
+    permission_classes = (permissions.AllowAny,)
 
+    def post(self, request, format=None):
+        serializer = AuthTokenSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        login(request, user)
+        return super(LoginAPI, self).post(request, format=None)
