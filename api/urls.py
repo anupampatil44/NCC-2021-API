@@ -6,7 +6,7 @@ from .views import (
     LoginAPI,
 questionhub,
 codingpage,
-
+current_user,
 )
 
 
@@ -18,4 +18,5 @@ urlpatterns=[
     path('logoutall/', knox_views.LogoutAllView.as_view(), name='logoutall'),
     path('questionhub/',questionhub.as_view(),name='questionhub'),
     path('codingpage/',codingpage.as_view(),name='codingpage'),
+    path('currentuser/',current_user,name="current_user"),
 ]

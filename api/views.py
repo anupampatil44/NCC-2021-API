@@ -4,6 +4,7 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 
 from rest_framework import permissions, generics
+from rest_framework.authentication import BasicAuthentication
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from knox.views import LoginView as KnoxLoginView
 from rest_framework import permissions
@@ -24,7 +25,7 @@ path_users_code = 'code_related/usersCode/'
 
 class RegisterAPI(generics.GenericAPIView):
     serializer_class = AccountSerializer
-
+    permission_classes = (permissions.AllowAny,)
     def post(self, request, *args, **kwargs):
         print("data:\n",request.data)
         serializer = self.get_serializer(data=request.data)
@@ -45,6 +46,7 @@ class RegisterAPI(generics.GenericAPIView):
 
 class LoginAPI(KnoxLoginView):
     permission_classes = (permissions.AllowAny,)
+    # authentication_classes = [BasicAuthentication]
 
     def post(self, request, format=None):
         serializer = AuthTokenSerializer(data=request.data)
@@ -52,6 +54,7 @@ class LoginAPI(KnoxLoginView):
         user = serializer.validated_data['user']
         login(request, user)
         return super(LoginAPI, self).post(request, format=None)
+
 
 
 
@@ -75,3 +78,8 @@ class codingpage(APIView):
             questions = Question.objects.all()
             serializer=Codingpageserializer(questions,many=True)
             return Response(serializer.data)
+
+@api_view(['GET'])
+def current_user(request):
+    serializer = UserSerializer(request.user)
+    return Response(serializer.data)
