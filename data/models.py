@@ -13,7 +13,7 @@ from rest_framework.authtoken.models import Token
 
 
 class Userdata(models.Model):
-    username = models.OneToOneField (User, on_delete=models.CASCADE)
+    username = models.OneToOneField (User, on_delete=models.CASCADE) #related_name='profile'
     # password = models.CharField(max_length=50,default=123456)
     phone = models.CharField(max_length=10)
     college = models.CharField(blank=True, max_length=255)

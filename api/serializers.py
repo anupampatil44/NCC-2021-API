@@ -23,10 +23,11 @@ class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model=User
         exclude = ['last_login', 'is_superuser', 'is_staff', 'date_joined', 'is_active', 'groups', 'user_permissions']
-        extra_kwargs = {'password': {'write_only': True}}
+        # extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
-        profile_data = validated_data.pop('profile')
+        print("validated data:\n",validated_data)
+        profile_data = validated_data.pop("profile")
         useri = User.objects.create_user(**validated_data)
         Userdata.objects.create(username=useri,**profile_data)
         return useri

@@ -1,3 +1,4 @@
+import os
 from tokenize import Token
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
@@ -19,7 +20,7 @@ from data.models import Question
 
 # @api_view(['POST',])
 
-
+path_users_code = 'code_related/usersCode/'
 
 class RegisterAPI(generics.GenericAPIView):
     serializer_class = AccountSerializer
@@ -27,15 +28,15 @@ class RegisterAPI(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         print("data:\n",request.data)
         serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        try:
+        if serializer.is_valid():
             user = serializer.save()
+            os.system("mkdir {}/{}".format(path_users_code,request.data["username"]))
             return Response({
             "user": UserSerializer(user, context=self.get_serializer_context()).data,
             "token": AuthToken.objects.create(user)[1]
             })
 
-        except Exception as e:
+        else:
             data = serializer.errors   #{"exception":str(e)}
             return Response(data)
 

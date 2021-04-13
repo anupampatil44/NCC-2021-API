@@ -22,8 +22,9 @@ class HelloView(APIView):
 
 
 def change_file_content(content, extension, code_file):
+    print("current path:",os.getcwd())
     if extension != 'py':
-        sandbox_header = '#include"../../../include/sandbox.h"\n'
+        sandbox_header = '#include"{}/{}/sandbox.h"\n'.format(os.getcwd(),"judge")
         try:
             # Inject the function call for install filters in the user code file
             # Issue with design this way (look for a better solution (maybe docker))
@@ -88,6 +89,7 @@ def coderun(request):
         run=True,
 
     )[0]
+    print("status val: ",status)
 
     # exp_op_path = standard + "output/question{}/expected_output7.txt".format(que_no)
 
@@ -98,8 +100,8 @@ def coderun(request):
     err_f = open(err_path, 'r')
     # exp_f = open(exp_op_path, 'r')
 
-    errcodes = ['CTE', 'RTE', 'AC', 'TLE']
-
+    errcodes = ['CTE', 'RTE', 'AT', 'TLE']
+    actual=""
     if status in errcodes:
         if status == "CTE":
             err_text = err_f.read()
@@ -115,6 +117,7 @@ def coderun(request):
         if status == 'AC':
             status = 'OK'
         actual = op_f.read()
+    print("output: ",actual)
 
     op_f.close()
     err_f.close()

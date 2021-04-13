@@ -9,6 +9,8 @@ signals = {
     0: 'AC',  # Correct ans
 
     1: 'CTE',  # compile time error
+    256: 'CTE',
+    128:'CTE',
     127: 'CTE',
     # 256: 'C.T.E',
 
@@ -77,16 +79,17 @@ def initialize_quota(quota):
 
 
 
-def compile_code(user_question_path, code_file_path, err_file): #for c and cpp codes only
-    lang = code_file_path.split('.')[1]
+def compile_code(user_question_path, code_file_path, err_file,lang): #for c and cpp codes only
+    # lang = code_file_path.split('.')[1]
     print("User err path:", err_file)
     if lang == 'c':
         rc = os.system(
             "gcc" + " -o " + user_question_path + 'exe ' + code_file_path + ' -lseccomp ' + '-lm 2>' + err_file)
     else:
+        print("in cpp")
         rc = os.system(
             "g++" + " -o " + user_question_path + 'exe ' + code_file_path + ' -lseccomp ' + '-lm 2>' + err_file)
-
+    print("rc",rc)
     return rc  # return 0 for success and 1 for error
 
 
@@ -156,7 +159,8 @@ def run_test_case(test_case_no,user_que_path,code_file_path,lang,qno,custominput
     return process_code
 
 
-def exec(username, qno, lang, test_cases=0, custominput=False, attempts=None, run=False):
+def exec(username, qno, lang, test_cases=1, custominput=False, attempts=None, run=False):
+    print("in exec")
     user_question_path = path_users_code + '{}/question{}/'.format(username, qno)
     if run:
         code_file=user_question_path+'code.{}'.format(lang)
@@ -176,9 +180,12 @@ def exec(username, qno, lang, test_cases=0, custominput=False, attempts=None, ru
 
 
     if(lang!='py'):
-        compilestat=compile_code(user_question_path, code_file, error_file)
+        print("in compile code")
+        compilestat=compile_code(user_question_path, code_file, error_file,lang)
+        print("compilestat: ",compilestat)
         if(compilestat!=0):
             result_codes=["CTE"]*test_cases
+            print("resultcodes",result_codes)
             return result_codes
 
 
