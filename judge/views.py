@@ -113,7 +113,7 @@ def run_in_sandbox(exec_path, lang, ipf, opf, errf, quota):
 
 
 def run_test_case(test_case_no,user_que_path,code_file_path,lang,qno,custominput):
-    if custominput=="true":
+    if custominput==True:
         input_file=user_que_path+"custominput.txt"
     else:
         input_file=standard_data+'input/question{}/input{}.txt'.format(qno,test_case_no)
@@ -149,13 +149,14 @@ def run_test_case(test_case_no,user_que_path,code_file_path,lang,qno,custominput
     e_output_file = standard_data + 'output/question{}/expected_output{}.txt'.format(qno, test_case_no)
 
     if process_code == 0:
-        result_value = compare(user_op_file, e_output_file)
-        return result_value
+        if(test_case_no!=7):
+            result_value = compare(user_op_file, e_output_file)
+            return result_value
 
     return process_code
 
 
-def exec(username, qno, lang, test_cases=0, custominput="false", attempts=None, run=False):
+def exec(username, qno, lang, test_cases=0, custominput=False, attempts=None, run=False):
     user_question_path = path_users_code + '{}/question{}/'.format(username, qno)
     if run:
         code_file=user_question_path+'code.{}'.format(lang)
