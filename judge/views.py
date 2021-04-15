@@ -153,7 +153,7 @@ def run_test_case(test_case_no,user_que_path,code_file_path,lang,qno,custominput
     e_output_file = standard_data + 'output/question{}/expected_output{}.txt'.format(qno, test_case_no)
 
     if process_code == 0:
-        if(test_case_no!=7):
+        if(test_case_no!=0):
             result_value = compare(user_output, e_output_file)
             return result_value
 
@@ -192,7 +192,7 @@ def exec(username, qno, lang, test_cases=1, custominput=False, attempts=None, ru
 
     if run:
         process_code = run_test_case(
-            test_case_no=7, # 7 corresponds to the sample input testcase
+            test_case_no=0, # 0 corresponds to the sample input testcase
             user_que_path=user_question_path,
             code_file_path=code_file,
             lang=lang,

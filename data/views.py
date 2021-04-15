@@ -97,7 +97,7 @@ class coderun(APIView):
         print("status val: ",status)
 
 
-        op_path = user_question_path + "output7.txt"
+        op_path = user_question_path + "output0.txt"
         err_path = user_question_path + "error.txt"
 
         op_f = open(op_path, 'r')
