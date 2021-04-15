@@ -65,7 +65,7 @@ class Submission(models.Model):
 
     languages = [("cpp", "C++"), ("c", "C"), ("py", "Python")]
 
-    user_id_fk = models.ForeignKey(Userdata, on_delete=models.CASCADE)
+    user_id_fk = models.ForeignKey(User, on_delete=models.CASCADE)
     question_id_fk = models.ForeignKey(Question, on_delete=models.CASCADE)
     score = models.FloatField(default=0)
     submission_time = models.DateTimeField(auto_now=True)
