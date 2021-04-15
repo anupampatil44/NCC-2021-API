@@ -15,7 +15,6 @@ from django.utils import timezone
 
 class Userdata(models.Model):
     username = models.ForeignKey (User, on_delete=models.CASCADE) #related_name='profile'
-    # password = models.CharField(max_length=50,default=123456)
     phone = models.CharField(max_length=10)
     college = models.CharField(blank=True, max_length=255)
     totalScore = models.IntegerField(default=0)
@@ -69,7 +68,7 @@ class Submission(models.Model):
     user_id_fk = models.ForeignKey(User, on_delete=models.CASCADE)
     question_id_fk = models.ForeignKey(Question, on_delete=models.CASCADE)
     score = models.FloatField(default=0)
-    submission_time = models.DateTimeField()
+    submission_time = models.DateTimeField(auto_now=True)
     attempt = models.IntegerField(default=0)
     status = models.CharField(default='NA', max_length=5)
     accuracy = models.FloatField(default=0)

@@ -15,7 +15,7 @@ from rest_framework.response import Response
 from knox.models import AuthToken
 from rest_framework.views import APIView
 
-from .serializers import UserSerializer, AccountSerializer, QuestionSerializer,Codingpageserializer,LeaderboardSerializer
+from .serializers import UserSerializer, AccountSerializer, QuestionSerializer,Codingpageserializer,LeaderboardSerializer,SubmissionsSerializer
 from data.models import Question,Userdata,Submission,User
 
 
@@ -109,4 +109,13 @@ class LeaderboardPage(APIView):
         serializer=LeaderboardSerializer(query,many=True)
         for i in range(len(serializer.data)):
             serializer.data[i]["scorelist"]=l[i]
+        return Response(serializer.data)
+
+class SubmissionsPage(APIView):
+    permission_classes = (IsAuthenticated,)
+    def post(self,request):
+        user=request.user
+        data=request.data
+        query=Submission.objects.filter(user_id_fk=user,question_id_fk=data["qno"]).order_by('submission_time')
+        serializer=SubmissionsSerializer(query,many=True)
         return Response(serializer.data)

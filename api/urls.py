@@ -8,6 +8,7 @@ questionhub,
 codingpage,
 current_user,
 LeaderboardPage,
+SubmissionsPage
 )
 
 
@@ -16,9 +17,9 @@ urlpatterns=[
     path('register/',RegisterAPI.as_view(),name='register'),
     path('login/',LoginAPI.as_view(),name='login'),
     path('logout/', knox_views.LogoutView.as_view(), name='logout'),
-    path('logoutall/', knox_views.LogoutAllView.as_view(), name='logoutall'),
     path('questionhub/',questionhub.as_view(),name='questionhub'),
     path('codingpage/',codingpage.as_view(),name='codingpage'),
     path('currentuser/',current_user,name="current_user"),
-    path('leaderboard/',LeaderboardPage.as_view(),name='leaderboard')
+    path('leaderboard/',LeaderboardPage.as_view(),name='leaderboard'),
+    path('submissions/',SubmissionsPage.as_view(),name='submissions'),
 ]

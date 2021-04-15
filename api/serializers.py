@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 
 # User Serializer
-from data.models import Userdata,Question
+from data.models import Userdata,Question,Submission
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -16,6 +16,12 @@ class LeaderboardSerializer(serializers.ModelSerializer):
     class Meta:
         model=Userdata
         fields=('username','totalScore')
+
+class SubmissionsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Submission
+        fields=('code','language','status','accuracy','submission_time','score')
+
 
 # Register Serializer
 class AccountSerializer(serializers.ModelSerializer):
