@@ -216,9 +216,7 @@ class code_submit(APIView):
                 cte += 1
             iter += 1
 
-        # sub.correctTestCases = no_of_pass
         sub.accuracy = (no_of_pass / que.no_of_testcases) * 100
-        # sub.save()
 
         subscore=0
         status = ''  # overall Status
@@ -242,10 +240,11 @@ class code_submit(APIView):
                 user.correctly_solved+=1
             else:
                 query=Submission.objects.filter(user_id_fk=usert,question_id_fk=que).order_by('-score')[0].score
-                inc=100-query
-                user.latest_ac_time = datetime.now()
-                user.totalScore += inc
-                user.correctly_solved += 1
+                if(query<100):
+                    inc=100-query
+                    user.latest_ac_time = datetime.now()
+                    user.totalScore += inc
+                    user.correctly_solved += 1
 
 
 
