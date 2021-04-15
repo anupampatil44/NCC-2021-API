@@ -8,7 +8,14 @@ from data.models import Userdata,Question
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'username', 'email')
+        fields = ('username', 'email')
+
+
+class LeaderboardSerializer(serializers.ModelSerializer):
+    username=UserSerializer(read_only=True,)
+    class Meta:
+        model=Userdata
+        fields=('username','totalScore')
 
 # Register Serializer
 class AccountSerializer(serializers.ModelSerializer):

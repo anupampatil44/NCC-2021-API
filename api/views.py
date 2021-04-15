@@ -15,8 +15,8 @@ from rest_framework.response import Response
 from knox.models import AuthToken
 from rest_framework.views import APIView
 
-from .serializers import UserSerializer, AccountSerializer, QuestionSerializer,Codingpageserializer
-from data.models import Question
+from .serializers import UserSerializer, AccountSerializer, QuestionSerializer,Codingpageserializer,LeaderboardSerializer
+from data.models import Question,Userdata
 
 
 # @api_view(['POST',])
@@ -83,3 +83,9 @@ class codingpage(APIView):
 def current_user(request):
     serializer = UserSerializer(request.user)
     return Response(serializer.data)
+
+@api_view(["GET"])
+def leaderboard(request):
+    query=Userdata.objects.order_by('-totalScore')
+    seriaizer=LeaderboardSerializer(query,many=True)
+    return Response(seriaizer.data)

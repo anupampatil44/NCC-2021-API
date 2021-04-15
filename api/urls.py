@@ -7,6 +7,7 @@ from .views import (
 questionhub,
 codingpage,
 current_user,
+leaderboard,
 )
 
 
@@ -19,4 +20,5 @@ urlpatterns=[
     path('questionhub/',questionhub.as_view(),name='questionhub'),
     path('codingpage/',codingpage.as_view(),name='codingpage'),
     path('currentuser/',current_user,name="current_user"),
+    path('leaderboard/',leaderboard,name='leaderboard')
 ]
