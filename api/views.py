@@ -86,6 +86,6 @@ def current_user(request):
 
 @api_view(["GET"])
 def leaderboard(request):
-    query=Userdata.objects.order_by('-totalScore')
+    query=Userdata.objects.order_by('-totalScore','latest_ac_time')
     seriaizer=LeaderboardSerializer(query,many=True)
     return Response(seriaizer.data)

@@ -9,6 +9,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
+from django.utils import timezone
 
 
 
@@ -21,7 +22,7 @@ class Userdata(models.Model):
     junior = models.BooleanField(default=False)
     correctly_solved = models.IntegerField(default=0)
     attempted = models.IntegerField(default=0)
-
+    latest_ac_time=models.DateTimeField(default=datetime.now())
     USERNAME_FIELD ='username'
     REQUIRED_FIELDS = ['email',]
 
@@ -68,7 +69,7 @@ class Submission(models.Model):
     user_id_fk = models.ForeignKey(User, on_delete=models.CASCADE)
     question_id_fk = models.ForeignKey(Question, on_delete=models.CASCADE)
     score = models.FloatField(default=0)
-    submission_time = models.DateTimeField(auto_now=True)
+    submission_time = models.DateTimeField()
     attempt = models.IntegerField(default=0)
     status = models.CharField(default='NA', max_length=5)
     accuracy = models.FloatField(default=0)
@@ -78,7 +79,12 @@ class Submission(models.Model):
     def __str__(self):
         return("submission_" + str(self.pk) + "_" + self.user_id_fk.username + "_question_" + str(self.question_id_fk))
 
-
+    def save(self, *args, **kwargs):
+        ''' On save, update timestamps '''
+        # if not self.id:
+        #     self.created = timezone.now()
+        self.submission_time = timezone.now()
+        return super(Submission, self).save(*args, **kwargs)
 
 
 

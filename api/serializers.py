@@ -23,7 +23,7 @@ class AccountSerializer(serializers.ModelSerializer):
     class RegisterSerializer(serializers.ModelSerializer):
         class Meta:
             model = Userdata
-            exclude=['username','totalScore','correctly_solved','attempted']
+            exclude=['username','totalScore','correctly_solved','attempted','latest_ac_time']
 
 
     profile=RegisterSerializer()

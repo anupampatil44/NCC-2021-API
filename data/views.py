@@ -182,7 +182,6 @@ class code_submit(APIView):
 
 
         sub = Submission(code=data["code"], user_id_fk=usert, question_id_fk=que, attempt=1) #modify attempt var later on
-        # sub.save()
 
         error_text = ""
 
@@ -221,6 +220,7 @@ class code_submit(APIView):
         sub.accuracy = (no_of_pass / que.no_of_testcases) * 100
         # sub.save()
 
+        subscore=0
         status = ''  # overall Status
         if (ac == que.no_of_testcases):
             status += 'AC'
@@ -232,17 +232,61 @@ class code_submit(APIView):
             status += "CTE"
 
         if status == 'AC':
-            user.totalScore+=100
-            sub.score=100
-            user.correctly_solved+=1
+
+            sub.score=subscore=100
+
+            # if this is the first ac submission for the question then update the latest_ac_time variable
+            if not Submission.objects.filter(user_id_fk=usert,question_id_fk=que).exists():
+                user.latest_ac_time=datetime.now()
+                user.totalScore += 100
+                user.correctly_solved+=1
+            else:
+                query=Submission.objects.filter(user_id_fk=usert,question_id_fk=que).order_by('-score')[0].score
+                inc=100-query
+                user.latest_ac_time = datetime.now()
+                user.totalScore += inc
+                user.correctly_solved += 1
+
+
+
             que.total_attempts+=1
             que.correct_attempts+=1
-            user.save()
-            que.save()
+            if not Submission.objects.filter(user_id_fk=usert,question_id_fk=que).exists():
+                user.attempted+=1
+
+        else:
+            if(user.junior==True):
+                print("in junior")
+                correcttc=0
+                for i in testcase_values:
+                    if i=="AC":
+                        correcttc+=1
+                tempscore=int((correcttc/que.no_of_testcases)*100)
+                print("tempscore",tempscore)
+                sub.score = subscore =tempscore
+                if ((Submission.objects.filter(user_id_fk=usert,question_id_fk=que).exists()) and Submission.objects.filter(user_id_fk=usert,question_id_fk=que).order_by('-score')[0].score<tempscore):
+                    q=Submission.objects.filter(user_id_fk=usert,question_id_fk=que).order_by('-score')[0]
+                    increment=tempscore-q.score
+                    user.totalScore+=increment
+                    que.total_attempts += 1
+                    user.latest_ac_time = datetime.now()
+
+                else:
+                    user.totalScore+=tempscore
+                    que.total_attempts += 1
+
+                if not Submission.objects.filter(user_id_fk=usert, question_id_fk=que).exists():
+                    user.attempted += 1
+                    user.latest_ac_time = datetime.now()
+
+
 
         sub.status=status
+        sub.language=data["lang"]
         sub.save()
-        testcases={"test_case_status":testcase_values,"error_file":error_text}
+        user.save()
+        que.save()
+        testcases={'status':status,"submission_score":subscore,"test_case_status":testcase_values,"console_out":error_text}
         print("testcase_values:",testcase_values)
         return Response(testcases)
 
