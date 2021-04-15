@@ -16,7 +16,7 @@ from knox.models import AuthToken
 from rest_framework.views import APIView
 
 from .serializers import UserSerializer, AccountSerializer, QuestionSerializer,Codingpageserializer,LeaderboardSerializer
-from data.models import Question,Userdata
+from data.models import Question,Userdata,Submission,User
 
 
 # @api_view(['POST',])
@@ -84,8 +84,29 @@ def current_user(request):
     serializer = UserSerializer(request.user)
     return Response(serializer.data)
 
-@api_view(["GET"])
-def leaderboard(request):
-    query=Userdata.objects.order_by('-totalScore','latest_ac_time')
-    seriaizer=LeaderboardSerializer(query,many=True)
-    return Response(seriaizer.data)
+
+class LeaderboardPage(APIView):
+    permission_classes = (IsAuthenticated,)
+    def get(self,request):
+        l=[]
+        question_count=Question.objects.all().count()
+        print("question count",question_count)
+        query=Userdata.objects.order_by('-totalScore','latest_ac_time')
+        current_rank=1
+        for coder in query.iterator():
+            usert=User.objects.get(username=coder)
+
+            temp=[]
+            for i in range(1,question_count+1):
+                que = Question.objects.get(pk=i)
+                if( Submission.objects.filter(question_id_fk=que,user_id_fk=usert).exists()):
+                    maxs=Submission.objects.filter(question_id_fk=que,user_id_fk=usert).order_by('-score')[0].score
+                    temp.append(maxs)
+                else:
+                    temp.append(0)
+            l.append(temp)
+
+        serializer=LeaderboardSerializer(query,many=True)
+        for i in range(len(serializer.data)):
+            serializer.data[i]["scorelist"]=l[i]
+        return Response(serializer.data)
