@@ -240,7 +240,7 @@ class code_submit(APIView):
                 user.correctly_solved+=1
             else:
                 query=Submission.objects.filter(user_id_fk=usert,question_id_fk=que).order_by('-score')[0].score
-                if(query<100):
+                if(query<100):  #100 is max. marks per question
                     inc=100-query
                     user.latest_ac_time = datetime.now()
                     user.totalScore += inc
