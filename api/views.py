@@ -92,7 +92,6 @@ class LeaderboardPage(APIView):
         question_count=Question.objects.all().count()
         print("question count",question_count)
         query=Userdata.objects.order_by('-totalScore','latest_ac_time')
-        current_rank=1
         for coder in query.iterator():
             usert=User.objects.get(username=coder)
 
@@ -119,3 +118,45 @@ class SubmissionsPage(APIView):
         query=Submission.objects.filter(user_id_fk=user,question_id_fk=data["qno"]).order_by('submission_time')
         serializer=SubmissionsSerializer(query,many=True)
         return Response(serializer.data)
+
+class Userstats(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        user=Userdata.objects.get(username=request.user)
+        #calculation of rank:
+        query = Userdata.objects.order_by('-totalScore', 'latest_ac_time')
+        current_rank = 1
+        for user1 in query:
+            print("current rank:",current_rank)
+            print("user",user1.username)
+            if(str(user1.username)!=str(request.user.username)):
+                current_rank += 1
+            if str(user1.username) == str(request.user.username):
+                break
+        data={
+            "username":request.user.username,
+            "rank":current_rank,
+            "totalScore":user.totalScore,
+            "correctly_solved":user.correctly_solved,
+            "attempted":user.attempted,
+        }
+
+        return Response(data)
+
+class loadbuffer(APIView):
+    permission_classes = (IsAuthenticated,)
+    def post(self,request):
+        data=request.data
+        qno=data["qno"]
+        code={}
+        if(Submission.objects.filter(user_id_fk=request.user,question_id_fk=qno).exists()):
+            required=Submission.objects.filter(user_id_fk=request.user,question_id_fk=qno).order_by('-submission_time')[0]
+            code["code"]=required.code
+            code["lang"]=required.language
+
+        else:
+            code["code"]="No submission for this question has been made yet."
+            code["lang"] ="NA"
+
+        return Response(code)

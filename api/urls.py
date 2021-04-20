@@ -8,11 +8,12 @@ questionhub,
 codingpage,
 current_user,
 LeaderboardPage,
-SubmissionsPage
+SubmissionsPage,
+Userstats,
+loadbuffer
 )
 
 
-app_name='account'
 urlpatterns=[
     path('register/',RegisterAPI.as_view(),name='register'),
     path('login/',LoginAPI.as_view(),name='login'),
@@ -22,4 +23,6 @@ urlpatterns=[
     path('currentuser/',current_user,name="current_user"),
     path('leaderboard/',LeaderboardPage.as_view(),name='leaderboard'),
     path('submissions/',SubmissionsPage.as_view(),name='submissions'),
+    path('userstats/',Userstats.as_view(),name='userstats'),
+    path('loadbuffer/',loadbuffer.as_view(),name='loadbuffer')
 ]
