@@ -10,7 +10,8 @@ current_user,
 LeaderboardPage,
 SubmissionsPage,
 Userstats,
-loadbuffer
+loadbuffer,
+Timer
 )
 
 
@@ -24,5 +25,6 @@ urlpatterns=[
     path('leaderboard/',LeaderboardPage.as_view(),name='leaderboard'),
     path('submissions/',SubmissionsPage.as_view(),name='submissions'),
     path('userstats/',Userstats.as_view(),name='userstats'),
-    path('loadbuffer/',loadbuffer.as_view(),name='loadbuffer')
+    path('loadbuffer/',loadbuffer.as_view(),name='loadbuffer'),
+    path('timer/', Timer.as_view(),name='loadbuffer'),
 ]

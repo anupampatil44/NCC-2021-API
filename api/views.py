@@ -1,4 +1,5 @@
 import os
+import datetime
 from tokenize import Token
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
@@ -22,6 +23,13 @@ from data.models import Question,Userdata,Submission,User
 # @api_view(['POST',])
 
 path_users_code = 'code_related/usersCode/'
+
+# variables used for timer
+start_time = 0
+end_time = 0
+duration = 0
+flag = False
+start = datetime.datetime(2021, 1, 1, 0, 0)
 
 class RegisterAPI(generics.GenericAPIView):
     serializer_class = AccountSerializer
@@ -160,3 +168,30 @@ class loadbuffer(APIView):
             code["lang"] ="NA"
 
         return Response(code)
+
+
+class Timer(APIView):
+    # permission_classes = [IsAuthenticated]
+
+    @staticmethod
+    def remaining_time():
+        time = datetime.datetime.now()
+        print(time)
+        now = (time.hour * 60 * 60) + (time.minute * 60) + time.second
+        if now < end_time:
+            time_left = end_time - now
+            print(time_left)
+            return time_left
+        else:
+            print("now",now)
+            print("end",end_time)
+            return 0
+
+
+
+    def get(self, request):
+        if Timer.remaining_time() != 0:
+            val = {'status': 'Remaining time is {}'.format(self.remaining_time())}
+            return Response(val, status=201)
+        val = {'status': 'Time is up!'}
+        return Response(val, status=201)
