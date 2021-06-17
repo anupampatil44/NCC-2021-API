@@ -171,7 +171,7 @@ class code_submit(APIView):
             username=username,
             qno=data["qno"],
             lang=lang,
-            test_cases=6,
+            test_cases=que.no_of_testcases,
         )
 
         code_f = open(code_file_path, 'w+')
