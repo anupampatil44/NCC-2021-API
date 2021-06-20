@@ -3,6 +3,7 @@ import datetime
 from tokenize import Token
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 
 from rest_framework import permissions, generics
 from rest_framework.authentication import BasicAuthentication
@@ -18,7 +19,7 @@ from rest_framework.views import APIView
 
 from .serializers import UserSerializer, AccountSerializer, QuestionSerializer,Codingpageserializer,LeaderboardSerializer,SubmissionsSerializer
 from data.models import Question,Userdata,Submission,User
-
+from rest_framework.pagination import PageNumberPagination
 
 # @api_view(['POST',])
 
@@ -93,13 +94,17 @@ def current_user(request):
     return Response(serializer.data)
 
 
-class LeaderboardPage(APIView):
+class LeaderboardPage(APIView,PageNumberPagination):
     permission_classes = (IsAuthenticated,)
+
     def get(self,request):
         l=[]
         question_count=Question.objects.all().count()
         print("question count",question_count)
         query=Userdata.objects.order_by('-totalScore','latest_ac_time')
+        pageno = int(request.GET.get('page','1'))
+        paginator = Paginator(query, 10)
+        page=paginator.page(pageno)
         for coder in query.iterator():
             usert=User.objects.get(username=coder)
 
@@ -113,9 +118,10 @@ class LeaderboardPage(APIView):
                     temp.append(0)
             l.append(temp)
 
-        serializer=LeaderboardSerializer(query,many=True)
+        serializer=LeaderboardSerializer(page,many=True)
         for i in range(len(serializer.data)):
             serializer.data[i]["scorelist"]=l[i]
+
         return Response(serializer.data)
 
 class SubmissionsPage(APIView):
