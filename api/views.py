@@ -20,7 +20,7 @@ from rest_framework.views import APIView
 from .serializers import UserSerializer, AccountSerializer, QuestionSerializer,Codingpageserializer,LeaderboardSerializer,SubmissionsSerializer
 from data.models import Question,Userdata,Submission,User
 from rest_framework.pagination import PageNumberPagination
-
+from collections import OrderedDict
 # @api_view(['POST',])
 
 path_users_code = 'code_related/usersCode/'
@@ -104,7 +104,9 @@ class LeaderboardPage(APIView,PageNumberPagination):
         query=Userdata.objects.order_by('-totalScore','latest_ac_time')
         pageno = int(request.GET.get('page','1'))
         paginator = Paginator(query, 10)
-        page=paginator.page(pageno)
+        page_obj=paginator.get_page(pageno)
+        page_range = paginator.page_range
+
         for coder in query.iterator():
             usert=User.objects.get(username=coder)
 
@@ -118,7 +120,7 @@ class LeaderboardPage(APIView,PageNumberPagination):
                     temp.append(0)
             l.append(temp)
 
-        serializer=LeaderboardSerializer(page,many=True)
+        serializer=LeaderboardSerializer(page_obj,many=True,context={'page_range':list(page_range)})
         for i in range(len(serializer.data)):
             serializer.data[i]["scorelist"]=l[i]
 

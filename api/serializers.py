@@ -13,9 +13,15 @@ class UserSerializer(serializers.ModelSerializer):
 
 class LeaderboardSerializer(serializers.ModelSerializer):
     username=UserSerializer(read_only=True,)
+    page_range= serializers.SerializerMethodField() # add field
+
     class Meta:
         model=Userdata
-        fields=('username','totalScore')
+        fields=('username','totalScore','page_range')
+
+    def get_page_range(self,obj):
+        page_range=self.context.get('page_range')
+        return page_range #can be modified to add more logic later on but not needed right now.
 
 class SubmissionsSerializer(serializers.ModelSerializer):
     class Meta:
