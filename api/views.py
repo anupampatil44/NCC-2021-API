@@ -142,20 +142,33 @@ class Userstats(APIView):
         user=Userdata.objects.get(username=request.user)
         #calculation of rank:
         query = Userdata.objects.order_by('-totalScore', 'latest_ac_time')
+        question_count = Question.objects.all().count()
         current_rank = 1
+        scorelist=[]
         for user1 in query:
             print("current rank:",current_rank)
             print("user",user1.username)
             if(str(user1.username)!=str(request.user.username)):
                 current_rank += 1
             if str(user1.username) == str(request.user.username):
+                usert = User.objects.get(username=user1)
+                for i in range(1, question_count + 1):
+                    que = Question.objects.get(pk=i)
+                    if (Submission.objects.filter(question_id_fk=que, user_id_fk=usert).exists()):
+                        maxs = Submission.objects.filter(question_id_fk=que, user_id_fk=usert).order_by('-score')[
+                            0].score
+                        scorelist.append(maxs)
+                    else:
+                        scorelist.append(0)
                 break
+
         data={
             "username":request.user.username,
             "rank":current_rank,
             "totalScore":user.totalScore,
             "correctly_solved":user.correctly_solved,
             "attempted":user.attempted,
+            "scorelist":scorelist,
         }
 
         return Response(data)
