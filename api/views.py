@@ -107,9 +107,12 @@ class LeaderboardPage(APIView,PageNumberPagination):
         page_obj=paginator.get_page(pageno)
         page_range = paginator.page_range
 
+        rankcount=1
+        ranklist=[]
         for coder in query.iterator():
             usert=User.objects.get(username=coder)
-
+            ranklist.append(rankcount)
+            rankcount+=1
             temp=[]
             for i in range(1,question_count+1):
                 que = Question.objects.get(pk=i)
@@ -123,6 +126,7 @@ class LeaderboardPage(APIView,PageNumberPagination):
         serializer=LeaderboardSerializer(page_obj,many=True,context={'page_range':list(page_range)})
         for i in range(len(serializer.data)):
             serializer.data[i]["scorelist"]=l[i]
+            serializer.data[i]["rank"] = ranklist[i]
 
         return Response(serializer.data)
 

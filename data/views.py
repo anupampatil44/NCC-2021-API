@@ -112,8 +112,11 @@ class coderun(APIView):
                 if (data["lang"] != "py"):
                     err_text = re.sub('data/.*?:', '', err_text)  # regular expression
                     err_text = re.sub('install_filters\(\);', '', err_text)
+                    err_text = re.sub('File(.*?)(\.cpp:|\.py",|\.c:)', '', err_text)
+                    err_text = re.sub('code_related(.*?)(\.cpp:|\.py",|\.c:)', '', err_text)
                 else:
                     err_text = re.sub('File(.*?)(\.cpp:|\.py",|\.c:)', '', err_text)
+                    err_text = re.sub('code_related(.*?)(\.cpp:|\.py",|\.c:)', '', err_text)
                 actual = err_text
             else:
                 actual = ""
@@ -192,8 +195,13 @@ class code_submit(APIView):
             if (data["lang"] != "py"):
                 error_text = re.sub('data/.*?:', '', error_text)  # regular expression
                 error_text = re.sub('install_filters\(\);', '', error_text)
+                error_text = re.sub('File(.*?)(\.cpp:|\.py",|\.c:)', '', error_text)
+                error_text = re.sub('code_related(.*?)(\.cpp:|\.py",|\.c:|\.iostream:)', '', error_text)
+                error_text = re.sub('/usr(.*?)(\.cpp:|\.py",|\.c:|\.iostream:)', '', error_text)
             else:
                 error_text = re.sub('File(.*?)(\.cpp:|\.py",|\.c:)', '', error_text)
+                error_text = re.sub('code_related(.*?)(\.cpp:|\.py",|\.c:|\.iostream:)', '', error_text)
+                error_text = re.sub('/usr/(.*?)(\.cpp:|\.py",|\.c:|\.ostream:)', '', error_text)
 
             ef.close()
 
