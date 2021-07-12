@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-
+import pytz
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.db import models
 import jwt
@@ -82,6 +82,7 @@ class Submission(models.Model):
         ''' On save, update timestamps '''
         # if not self.id:
         #     self.created = timezone.now()
+        timezone.activate(pytz.timezone('Asia/Kolkata'))
         self.submission_time = timezone.now()
         return super(Submission, self).save(*args, **kwargs)
 
