@@ -126,7 +126,7 @@ class LeaderboardPage(APIView,PageNumberPagination):
         serializer=LeaderboardSerializer(page_obj,many=True,context={'page_range':list(page_range)})
         for i in range(len(serializer.data)):
             serializer.data[i]["scorelist"]=l[i]
-            serializer.data[i]["rank"] = ranklist[i]
+            serializer.data[i]["rank"] = ranklist[i+(pageno-1)*10]
 
         return Response(serializer.data)
 
