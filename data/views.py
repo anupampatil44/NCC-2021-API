@@ -283,6 +283,9 @@ class code_submit(APIView):
                         user.totalScore+=tempscore
                         que.total_attempts += 1
 
+            else:
+                que.total_attempts += 1
+
             if not Submission.objects.filter(user_id_fk=usert, question_id_fk=que).exists():
                 user.attempted += 1
                 user.latest_ac_time = datetime.now()
