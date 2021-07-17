@@ -81,12 +81,14 @@ class questionhub(APIView):
 
 class codingpage(APIView):
     permission_classes = (IsAuthenticated,)
-    def get(self,request,format=None):
 
-        if request.method == 'GET':
-            questions = Question.objects.all()
-            serializer=Codingpageserializer(questions,many=True)
-            return Response(serializer.data)
+    def post(self,request,format=None):
+        data=request.data
+        qno=data['qno']
+        print("qno",qno)
+        questions = Question.objects.filter(pk=qno)
+        serializer=Codingpageserializer(questions,many=True)
+        return Response(serializer.data)
 
 @api_view(['GET'])
 def current_user(request):
