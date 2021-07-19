@@ -60,7 +60,7 @@ def get_quota(qno, test_case_no,lang):
     mem = lines[1].strip()  # memory
 
     quota = {
-        'time': int(time),
+        'time': float(time),
         'mem': int(mem),
     }
     return quota
