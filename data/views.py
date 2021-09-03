@@ -32,9 +32,8 @@ def change_file_content(content, extension, code_file):
     if extension != 'py':
         sandbox_header = '#include"{}/{}/sandbox.h"\n'.format(os.getcwd(),"judge")
         try:
-            # Inject the function call for install filters in the user code file
-            # Issue with design this way (look for a better solution (maybe docker))
-            # multiple main strings
+            # Add the function call for install filters in the user code file
+            # multiple main strings for identifying & inserting before and after main method in the c and cpp files.
             before_main = content.split('main')[0] + 'main'
             after_main = content.split('main')[1]
             index = after_main.find('{') + 1
@@ -50,7 +49,7 @@ def change_file_content(content, extension, code_file):
                 f.write(content)
                 f.close()
 
-    else:
+    else: #for python codes, direclty import the file with the filter call
         with open(code_file, 'w+') as f:
             f.write('import temp\n')
             f.write(content)
@@ -102,7 +101,6 @@ class coderun(APIView):
 
         op_f = open(op_path, 'r')
         err_f = open(err_path, 'r')
-        # exp_f = open(exp_op_path, 'r')
 
         errcodes = ['CTE', 'RTE', 'AT', 'TLE']
         actual=""
@@ -166,8 +164,7 @@ class code_submit(APIView):
         print("qno:",data["qno"])
         code_file_path = os.getcwd()+'/'+user_question_path + "code{}.{}".format( 1,data["lang"])
 
-
-
+        #adding the seccomp filtering code dependency to the code file:
         change_file_content(data["code"], data["lang"], code_file_path)
 
         testcase_values = exec(

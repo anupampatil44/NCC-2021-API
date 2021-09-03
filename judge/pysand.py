@@ -3,6 +3,10 @@ import sys
 
 # create a filter object with a default KILL action
 
+'''For more information, refer: 
+https://github.com/seccomp/libseccomp/blob/main/src/python/seccomp.pyx
+https://lwn.net/Articles/634391/
+'''
 
 def install_filter():
     f = SyscallFilter(defaction=KILL)
@@ -15,7 +19,7 @@ def install_filter():
     f.add_rule(ALLOW, "rt_sigaction")
     f.add_rule(ALLOW, "exit_group")
 
-    # Required for traceback when a runtime error occurs
+    # Required for traceback when a runtime error occurs, the following signals are necessary
     f.add_rule(ALLOW, "read")
     f.add_rule(ALLOW, "stat")
     f.add_rule(ALLOW, "openat")
@@ -34,7 +38,7 @@ def install_filter():
     f.add_rule(ALLOW, "fcntl")
 
 
-    f.load()
+    f.load() # Loading the current seccomp filter into the kernel using the .load() method.
 
 
 install_filter()
