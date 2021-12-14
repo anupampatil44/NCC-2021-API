@@ -1,5 +1,6 @@
 # National Computing Contest:<br>
-A RESTful API based Judge System for Hosting Competitive Coding Tournaments, the backend API for NCC 2021.
+A RESTful API based Judge System for Hosting Competitive Coding Tournaments, the backend API for the National Computing Contest (held under PISB) 2021.<br>
+Capable of compiling the user’s code in C, C++ and Python and testing it against a pre-defined set of testcases.
 
 # Tech Stack:<br>
 Django REST Framework
